@@ -1,22 +1,37 @@
 # Agent Governance MVP
 
-This project is a small async FastAPI backend that demonstrates the foundation of a governed agentic AI system.
+![Wednesday Waypoints: From Principles to Proof](docs/assets/wednesday-waypoints-01.png)
 
-The goal is not to build a chatbot. The goal is to show how an agent runtime can be made auditable, validated, and approval-aware.
+**A test-verified control-plane prototype for auditable, approval-aware agentic AI.**
 
-## Portfolio Evidence
+The model or planner proposes an action. The backend remains responsible for
+tool validation, policy decisions, human authorization, execution, and audit
+evidence. The goal is not to build a chatbot; it is to make agent behavior
+inspectable and governable.
+
+**Verified:** 62 automated tests · 16/16 policy scenarios · eight configured
+outcome-benchmark scenarios
+
+## Three-Minute Portfolio Review
 
 > **Publication status: PUBLIC.** This is the clean-history, sanitized portfolio
 > repository. Private development history is excluded, and public commits use
 > `jorgenunez1ghub` with the GitHub-provided no-reply address.
 
-Use this self-contained review path to separate shipped controls from planned
-or unmeasured evidence:
+Use this self-contained path to separate shipped controls from planned or
+unmeasured evidence:
 
 1. [Approver authorization design](docs/approver-authorization.md) — local-demo identity, role/scope checks, and separation-of-duties controls.
 2. [Outcome-evidence benchmark workflow](docs/outcome-evidence/README.md) — the versioned scenario contract, bundle workflow, harness, and verification gate.
 3. [Outcome Evidence Protocol v1](docs/outcome-evidence/protocol.v1.md) — status is **PRE-REGISTERED / NOT RUN**; it defines an internal paired benchmark and its interpretation limits.
 4. [Project Status](PROJECT_STATUS.md) — the current implementation, evidence boundary, gaps, and next decisions.
+
+| Review question | Evidence |
+|---|---|
+| How are agent actions controlled? | [Architecture](docs/architecture.md) and the policy flow below |
+| How is human approval governed? | [Approver authorization](docs/approver-authorization.md) |
+| How is behavior verified? | `make verify`, 62 tests, and 16 versioned policy scenarios |
+| What has not been proven? | [Outcome protocol](docs/outcome-evidence/protocol.v1.md) and [project status](PROJECT_STATUS.md) |
 
 **Evidence boundary:** benchmark infrastructure has shipped; measured reviewer-performance outcomes have not been established. Approver authorization remains a local governed-execution demonstration, not production identity infrastructure.
 
