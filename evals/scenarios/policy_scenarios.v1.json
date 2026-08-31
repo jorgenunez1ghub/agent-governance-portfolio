@@ -1,0 +1,722 @@
+{
+  "schema_version": "1.2.0",
+  "suite_id": "agent-governance-policy-core",
+  "policy_version": "agent-governance-policy-2.1",
+  "scenarios": [
+    {
+      "id": "allow_trusted_internal_write",
+      "description": "A trusted, in-scope internal write executes automatically on a clean path.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Create an internal action item to review project risk",
+        "risk_level": "medium"
+      },
+      "expected": {
+        "initial_status": "completed",
+        "policy_outcome": "allow",
+        "reason_codes": [
+          "trusted_tool_within_agent_scope"
+        ],
+        "tool_executed": true,
+        "required_events": [
+          "run_started",
+          "tool_validation_passed",
+          "policy_evaluated",
+          "tool_executed",
+          "run_completed",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "approval_required",
+          "run_denied",
+          "run_failed"
+        ],
+        "path_action_outcomes": [
+          "executed"
+        ],
+        "evaluated_path_action_count": 0
+      }
+    },
+    {
+      "id": "approve_external_write",
+      "description": "An external write pauses and executes only after approval.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "tool_behavior": {
+        "tool_name": "send_external_message",
+        "mode": "count_only"
+      },
+      "approval_attempts": [
+        {
+          "idempotency_key": "approve-external-write"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "final_status": "executed",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": true,
+        "required_events": [
+          "approval_required",
+          "approval_approved",
+          "approval_execution_started",
+          "execution_receipt_recorded",
+          "tool_executed",
+          "run_completed",
+          "path_action_recorded",
+          "path_action_updated"
+        ],
+        "forbidden_events": [
+          "run_denied"
+        ],
+        "path_action_outcomes": [
+          "executed"
+        ],
+        "evaluated_path_action_count": 0,
+        "approval_attempt_results": [
+          "executed"
+        ],
+        "execution_receipt_statuses": [
+          "succeeded"
+        ],
+        "approval_state": "executed",
+        "handler_call_count": 1,
+        "idempotent_replay_count": 0
+      }
+    },
+    {
+      "id": "deny_out_of_scope_tool",
+      "description": "A read-only agent cannot use an internal-write tool outside its registered scope.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "read-only-agent",
+        "task": "Create an internal action item to review project risk",
+        "risk_level": "medium"
+      },
+      "expected": {
+        "initial_status": "denied",
+        "policy_outcome": "deny",
+        "reason_codes": [
+          "tool_outside_agent_scope"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "policy_evaluated",
+          "run_denied",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "denied"
+        ],
+        "evaluated_path_action_count": 0
+      }
+    },
+    {
+      "id": "deny_unknown_agent",
+      "description": "An unregistered agent is denied before tool execution.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "unknown-agent",
+        "task": "Look up the governance policy",
+        "risk_level": "low"
+      },
+      "expected": {
+        "initial_status": "denied",
+        "policy_outcome": "deny",
+        "reason_codes": [
+          "agent_not_registered"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "policy_evaluated",
+          "run_denied",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "denied"
+        ],
+        "evaluated_path_action_count": 0
+      }
+    },
+    {
+      "id": "deny_untrusted_tool",
+      "description": "A registry tool marked unverified is denied with provenance evidence.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Look up the governance policy",
+        "risk_level": "low"
+      },
+      "tool_overrides": {
+        "tool_name": "lookup_policy",
+        "provenance_status": "unverified"
+      },
+      "expected": {
+        "initial_status": "denied",
+        "policy_outcome": "deny",
+        "reason_codes": [
+          "tool_provenance_not_trusted"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "policy_evaluated",
+          "run_denied",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "denied"
+        ],
+        "evaluated_path_action_count": 0
+      }
+    },
+    {
+      "id": "reject_invalid_tool_input",
+      "description": "Invalid tool input fails before policy evaluation or execution.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send invalid external message about project risk",
+        "risk_level": "high"
+      },
+      "expected": {
+        "initial_status": "failed",
+        "reason_codes": [],
+        "tool_executed": false,
+        "required_events": [
+          "tool_validation_failed",
+          "run_failed",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "policy_evaluated",
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "validation_failed"
+        ]
+      }
+    },
+    {
+      "id": "block_approval_version_mismatch",
+      "description": "A pending approval cannot execute after the registered tool version changes.",
+      "mode": "approval_version_mismatch",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "mismatch_version": "2.0.0",
+      "expected": {
+        "initial_status": "approval_required",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "approval_required",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "approval_approved",
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "approval_required"
+        ],
+        "expected_exception": "ApprovalTransitionError",
+        "evaluated_path_action_count": 0
+      }
+    },
+    {
+      "id": "escalate_write_after_failed_action",
+      "description": "A failed action on the same execution path escalates a normally allowed internal write.",
+      "mode": "path_sequence",
+      "steps": [
+        {
+          "user_id": "eval-user",
+          "agent_id": "demo-agent",
+          "task": "Send invalid external message about project risk",
+          "risk_level": "high"
+        },
+        {
+          "user_id": "eval-user",
+          "agent_id": "demo-agent",
+          "task": "Create an internal action item to review project risk",
+          "risk_level": "medium"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "prior_adverse_outcome_requires_human"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "tool_validation_failed",
+          "run_failed",
+          "policy_evaluated",
+          "approval_required",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "validation_failed",
+          "approval_required"
+        ],
+        "evaluated_path_action_count": 1
+      }
+    },
+    {
+      "id": "allow_read_after_failed_action",
+      "description": "A read-only policy lookup remains available after an adverse path outcome.",
+      "mode": "path_sequence",
+      "steps": [
+        {
+          "user_id": "eval-user",
+          "agent_id": "demo-agent",
+          "task": "Send invalid external message about project risk",
+          "risk_level": "high"
+        },
+        {
+          "user_id": "eval-user",
+          "agent_id": "demo-agent",
+          "task": "Look up the governance policy",
+          "risk_level": "low"
+        }
+      ],
+      "expected": {
+        "initial_status": "completed",
+        "policy_outcome": "allow",
+        "reason_codes": [
+          "trusted_tool_within_agent_scope"
+        ],
+        "tool_executed": true,
+        "required_events": [
+          "tool_validation_failed",
+          "run_failed",
+          "policy_evaluated",
+          "tool_executed",
+          "run_completed",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "run_denied"
+        ],
+        "path_action_outcomes": [
+          "validation_failed",
+          "executed"
+        ],
+        "evaluated_path_action_count": 1
+      }
+    },
+    {
+      "id": "replay_duplicate_approval",
+      "description": "Repeating an approval with the same idempotency key replays one successful receipt without executing twice.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "tool_behavior": {
+        "tool_name": "send_external_message",
+        "mode": "count_only"
+      },
+      "approval_attempts": [
+        {
+          "idempotency_key": "duplicate-key"
+        },
+        {
+          "idempotency_key": "duplicate-key"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "final_status": "executed",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": true,
+        "required_events": [
+          "approval_execution_started",
+          "execution_receipt_recorded",
+          "approval_execution_replayed",
+          "tool_executed",
+          "run_completed"
+        ],
+        "forbidden_events": [
+          "approval_execution_failed"
+        ],
+        "path_action_outcomes": [
+          "executed"
+        ],
+        "evaluated_path_action_count": 0,
+        "approval_attempt_results": [
+          "executed",
+          "executed"
+        ],
+        "execution_receipt_statuses": [
+          "succeeded"
+        ],
+        "approval_state": "executed",
+        "handler_call_count": 1,
+        "idempotent_replay_count": 1
+      }
+    },
+    {
+      "id": "expire_pending_approval",
+      "description": "An approval that reaches its expiry fails closed before a receipt or tool execution is created.",
+      "mode": "runtime",
+      "approval_ttl_seconds": 0,
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "tool_behavior": {
+        "tool_name": "send_external_message",
+        "mode": "count_only"
+      },
+      "approval_attempts": [
+        {
+          "idempotency_key": "expired-key"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "approval_required",
+          "approval_expired",
+          "run_failed",
+          "path_action_updated"
+        ],
+        "forbidden_events": [
+          "approval_execution_started",
+          "execution_receipt_recorded",
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "expired"
+        ],
+        "evaluated_path_action_count": 0,
+        "approval_attempt_results": [
+          "error:ApprovalExpiredError"
+        ],
+        "execution_receipt_statuses": [],
+        "approval_state": "expired",
+        "handler_call_count": 0,
+        "idempotent_replay_count": 0
+      }
+    },
+    {
+      "id": "retry_transient_failure_with_new_key",
+      "description": "A retryable failure replays under the same key and succeeds only when a new key starts attempt two.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "tool_behavior": {
+        "tool_name": "send_external_message",
+        "mode": "fail_once_retryable"
+      },
+      "approval_attempts": [
+        {
+          "idempotency_key": "attempt-1"
+        },
+        {
+          "idempotency_key": "attempt-1"
+        },
+        {
+          "idempotency_key": "attempt-2"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "final_status": "executed",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": true,
+        "required_events": [
+          "approval_execution_failed",
+          "approval_execution_replayed",
+          "execution_receipt_recorded",
+          "run_failed",
+          "tool_executed",
+          "run_completed"
+        ],
+        "forbidden_events": [
+          "approval_expired"
+        ],
+        "path_action_outcomes": [
+          "executed"
+        ],
+        "evaluated_path_action_count": 0,
+        "approval_attempt_results": [
+          "execution_failed",
+          "execution_failed",
+          "executed"
+        ],
+        "execution_receipt_statuses": [
+          "failed",
+          "succeeded"
+        ],
+        "approval_state": "executed",
+        "handler_call_count": 2,
+        "idempotent_replay_count": 1
+      }
+    },
+    {
+      "id": "block_retry_after_terminal_failure",
+      "description": "A terminal execution failure replays under the original key and rejects a new retry key.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "tool_behavior": {
+        "tool_name": "send_external_message",
+        "mode": "fail_terminal"
+      },
+      "approval_attempts": [
+        {
+          "idempotency_key": "attempt-1"
+        },
+        {
+          "idempotency_key": "attempt-1"
+        },
+        {
+          "idempotency_key": "attempt-2"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "final_status": "execution_failed",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "approval_execution_failed",
+          "approval_execution_replayed",
+          "execution_receipt_recorded",
+          "run_failed"
+        ],
+        "forbidden_events": [
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "execution_failed"
+        ],
+        "evaluated_path_action_count": 0,
+        "approval_attempt_results": [
+          "execution_failed",
+          "execution_failed",
+          "error:ApprovalRetryNotAllowedError"
+        ],
+        "execution_receipt_statuses": [
+          "failed"
+        ],
+        "approval_state": "execution_failed",
+        "handler_call_count": 1,
+        "idempotent_replay_count": 1
+      }
+    },
+    {
+      "id": "deny_requester_self_approval",
+      "description": "An authenticated approver cannot authorize a request carrying the same requester identity claim.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "demo-approver",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "tool_behavior": {
+        "tool_name": "send_external_message",
+        "mode": "count_only"
+      },
+      "approval_attempts": [
+        {
+          "idempotency_key": "self-approval",
+          "approver_id": "demo-approver"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "approval_required",
+          "approval_authorization_denied",
+          "path_action_recorded"
+        ],
+        "forbidden_events": [
+          "approval_authorization_granted",
+          "approval_approved",
+          "approval_execution_started",
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "approval_required"
+        ],
+        "evaluated_path_action_count": 0,
+        "approval_attempt_results": [
+          "error:ApprovalAuthorizationError"
+        ],
+        "execution_receipt_statuses": [],
+        "approval_state": "pending",
+        "handler_call_count": 0,
+        "idempotent_replay_count": 0,
+        "authorization_denied_count": 1
+      }
+    },
+    {
+      "id": "deny_approver_outside_scope",
+      "description": "An authenticated reviewer cannot approve a tool and risk level outside registered scope.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "tool_behavior": {
+        "tool_name": "send_external_message",
+        "mode": "count_only"
+      },
+      "approval_attempts": [
+        {
+          "idempotency_key": "out-of-scope",
+          "approver_id": "limited-approver"
+        }
+      ],
+      "expected": {
+        "initial_status": "approval_required",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "approval_required",
+          "approval_authorization_denied"
+        ],
+        "forbidden_events": [
+          "approval_authorization_granted",
+          "approval_approved",
+          "approval_execution_started",
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "approval_required"
+        ],
+        "evaluated_path_action_count": 0,
+        "approval_attempt_results": [
+          "error:ApprovalAuthorizationError"
+        ],
+        "execution_receipt_statuses": [],
+        "approval_state": "pending",
+        "handler_call_count": 0,
+        "idempotent_replay_count": 0,
+        "authorization_denied_count": 1
+      }
+    },
+    {
+      "id": "authorized_approver_rejects_action",
+      "description": "An authenticated in-scope reviewer can reject the exact pending action and preserve identity evidence.",
+      "mode": "runtime",
+      "request": {
+        "user_id": "eval-user",
+        "agent_id": "demo-agent",
+        "task": "Send an external message about the project risk",
+        "risk_level": "high"
+      },
+      "approval_action": "reject",
+      "expected": {
+        "initial_status": "approval_required",
+        "final_status": "rejected",
+        "policy_outcome": "require_approval",
+        "reason_codes": [
+          "external_write_requires_human"
+        ],
+        "tool_executed": false,
+        "required_events": [
+          "approval_authorization_granted",
+          "approval_rejected",
+          "run_failed",
+          "path_action_updated"
+        ],
+        "forbidden_events": [
+          "approval_authorization_denied",
+          "approval_execution_started",
+          "tool_executed",
+          "run_completed"
+        ],
+        "path_action_outcomes": [
+          "rejected"
+        ],
+        "evaluated_path_action_count": 0,
+        "execution_receipt_statuses": [],
+        "approval_state": "rejected",
+        "authorization_denied_count": 0
+      }
+    }
+  ]
+}

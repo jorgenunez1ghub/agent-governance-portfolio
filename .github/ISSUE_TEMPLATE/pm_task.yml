@@ -1,0 +1,89 @@
+name: PM task
+description: Define a product, governance, evaluation, or delivery task with testable outcomes.
+title: "[PM] "
+labels:
+  - "pm"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for scoped work that changes product behavior, governance evidence, or delivery readiness. Do not include secrets or sensitive data.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What observable problem or evidence gap are we solving?
+      placeholder: The current single-action policy suite does not provide a versioned product-level measure of false allows or trace completeness.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user
+    attributes:
+      label: User or reviewer
+      description: Who benefits or makes a decision from this work?
+      placeholder: AI platform engineer, governance reviewer, security reviewer, or portfolio evaluator.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed solution
+      description: Describe the smallest useful outcome. Include non-goals when they protect scope.
+      placeholder: Add versioned evaluation fixtures and a runner; do not change policy behavior in this task.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: List observable, testable behavior and evidence.
+      placeholder: |
+        - [ ] Fixtures cover allow, approval, deny, and validation failure.
+        - [ ] Each scenario asserts outcome, reason code, execution, and audit events.
+        - [ ] The documented command passes locally.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List prerequisite issues, decisions, data, tools, or reviewers. Enter "None" when independent.
+      placeholder: D-007 decision, policy schema, or None.
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and controls
+      description: Reference risk-register IDs and explain new product, technical, security/privacy, or delivery risks.
+      placeholder: R-008 — missing negative scenarios could create false confidence; require fixture review.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: Test and evidence plan
+      description: Which automated tests, evaluations, demo steps, or audit records will prove completion?
+      placeholder: Run .venv/bin/pytest -q and the evaluation command; attach scenario summary.
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: Definition of done
+      description: Include implementation, validation, documentation, and PM artifact updates.
+      placeholder: |
+        - [ ] Acceptance criteria pass.
+        - [ ] Failure paths are tested.
+        - [ ] Documentation matches behavior.
+        - [ ] Status, backlog, risks, and decisions are updated where material.
+    validations:
+      required: true

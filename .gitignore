@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+app/storage/audit_log.jsonl
+
+# Machine-local and generated material
+.DS_Store
+.env
+.env.*
+!.env.example
+.vscode/
+*.inspect.ndjson
