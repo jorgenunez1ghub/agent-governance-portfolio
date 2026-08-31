@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "internal-paired-20260827",
+  "evidence_class": "internal paired benchmark",
+  "source_commit": "98573688e1459c4976c53e7a2a54deea01dcb405",
+  "app_version": "0.5.0",
+  "benchmark": {
+    "benchmark_id": "governed-review-outcome-v1",
+    "schema_version": "1.0.0",
+    "scenario_ids": [
+      "allow_trusted_internal_write",
+      "approve_external_write",
+      "deny_out_of_scope_tool",
+      "expire_pending_approval",
+      "replay_duplicate_approval",
+      "block_retry_after_terminal_failure",
+      "retry_transient_failure_with_new_key",
+      "escalate_write_after_failed_action"
+    ]
+  },
+  "policy_suite": {
+    "schema_version": "1.2.0",
+    "suite_id": "agent-governance-policy-core",
+    "policy_version": "agent-governance-policy-2.1"
+  },
+  "participant_roles": {
+    "reviewer-01": "independent internal governance reviewer"
+  },
+  "exceptions": [],
+  "limitations": [
+    "A single internal reviewer cannot represent production operators or establish generalizable productivity effects.",
+    "The frozen baseline-first, assisted-second order can introduce learning and ordering effects.",
+    "Local timing includes participant and workstation variability and is not a production latency measure.",
+    "The benchmark implementation session inspected the answer key and is excluded from measurement participation."
+  ]
+}

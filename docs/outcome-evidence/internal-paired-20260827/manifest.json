@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "benchmark_id": "governed-review-outcome-v1",
+  "run_id": "internal-paired-20260827",
+  "source_commit": "98573688e1459c4976c53e7a2a54deea01dcb405",
+  "status": "NOT_RUN",
+  "evidence_class": "internal paired benchmark",
+  "inventory": {
+    "assisted_results.csv": {
+      "sha256": "56c439722aff58c6fe669f5d2c16640ee75ab13d737d6c1b819a87ea4d351498",
+      "bytes": 226
+    },
+    "baseline_results.csv": {
+      "sha256": "56c439722aff58c6fe669f5d2c16640ee75ab13d737d6c1b819a87ea4d351498",
+      "bytes": 226
+    },
+    "outcome_summary.md": {
+      "sha256": "0bf9b3e383ccbf0c77a26fbb57e5337dd6a0e0daf82075d7e9af0aaba881d168",
+      "bytes": 166
+    },
+    "policy_eval_results.json": {
+      "sha256": "76c84f92275339460387031e50ee008a80285fb5564caff5d3c5c5aab124c91c",
+      "bytes": 2706
+    },
+    "protocol.md": {
+      "sha256": "278a9448fadea8c6c1a514e23562d9309d2e65cd6e91ed83ddb987cb0d8d8d81",
+      "bytes": 3763
+    },
+    "reviewer_feedback.md": {
+      "sha256": "9855333e60ed05a60a68f20f89055a49222d68c0c0c9063b6fdbd9cd3b886d48",
+      "bytes": 398
+    },
+    "run_metadata.json": {
+      "sha256": "2330faadc18760208515faf3f07d64ca5a665fbacc92f5e72b37755769b7c9a5",
+      "bytes": 1384
+    },
+    "scenario_answer_key.json": {
+      "sha256": "19313dbb97d332cfe571f9fc9180f96d3d63fd809e84f50e7c6d8ede886063e0",
+      "bytes": 2099
+    }
+  }
+}

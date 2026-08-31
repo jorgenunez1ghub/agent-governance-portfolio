@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "benchmark_id": "governed-review-outcome-v1",
+  "source_policy_suite": "evals/scenarios/policy_scenarios.v1.json",
+  "policy_suite": {
+    "schema_version": "1.2.0",
+    "suite_id": "agent-governance-policy-core",
+    "policy_version": "agent-governance-policy-2.1"
+  },
+  "targets": {
+    "assisted_disposition_accuracy": 1.0,
+    "decision_time_improvement_pct": 30.0,
+    "audit_time_improvement_pct": 50.0,
+    "median_usefulness": 4.0,
+    "evidence_completeness": 1.0
+  },
+  "scenarios": [
+    {
+      "scenario_id": "allow_trusted_internal_write",
+      "coverage": "allow",
+      "expected_disposition": "allow",
+      "expected_terminal_outcome": "completed"
+    },
+    {
+      "scenario_id": "approve_external_write",
+      "coverage": "require_approval",
+      "expected_disposition": "require_approval",
+      "expected_terminal_outcome": "executed"
+    },
+    {
+      "scenario_id": "deny_out_of_scope_tool",
+      "coverage": "deny",
+      "expected_disposition": "deny",
+      "expected_terminal_outcome": "denied"
+    },
+    {
+      "scenario_id": "expire_pending_approval",
+      "coverage": "expiry",
+      "expected_disposition": "require_approval",
+      "expected_terminal_outcome": "expired"
+    },
+    {
+      "scenario_id": "replay_duplicate_approval",
+      "coverage": "idempotent_replay",
+      "expected_disposition": "require_approval",
+      "expected_terminal_outcome": "executed_once"
+    },
+    {
+      "scenario_id": "block_retry_after_terminal_failure",
+      "coverage": "failed_execution",
+      "expected_disposition": "require_approval",
+      "expected_terminal_outcome": "execution_failed"
+    },
+    {
+      "scenario_id": "retry_transient_failure_with_new_key",
+      "coverage": "retry",
+      "expected_disposition": "require_approval",
+      "expected_terminal_outcome": "executed_after_retry"
+    },
+    {
+      "scenario_id": "escalate_write_after_failed_action",
+      "coverage": "path_escalation",
+      "expected_disposition": "require_approval",
+      "expected_terminal_outcome": "approval_required"
+    }
+  ]
+}

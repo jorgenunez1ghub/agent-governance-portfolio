@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0.0",
+  "recorded_at": "2026-08-31T18:16:32.911876+00:00",
+  "source_commit": "98573688e1459c4976c53e7a2a54deea01dcb405",
+  "result": {
+    "suite_id": "agent-governance-policy-core",
+    "schema_version": "1.2.0",
+    "policy_version": "agent-governance-policy-2.1",
+    "passed": true,
+    "passed_count": 16,
+    "total_count": 16,
+    "scenarios": [
+      {
+        "scenario_id": "allow_trusted_internal_write",
+        "passed": true,
+        "failures": [],
+        "event_count": 9
+      },
+      {
+        "scenario_id": "approve_external_write",
+        "passed": true,
+        "failures": [],
+        "event_count": 16
+      },
+      {
+        "scenario_id": "deny_out_of_scope_tool",
+        "passed": true,
+        "failures": [],
+        "event_count": 8
+      },
+      {
+        "scenario_id": "deny_unknown_agent",
+        "passed": true,
+        "failures": [],
+        "event_count": 8
+      },
+      {
+        "scenario_id": "deny_untrusted_tool",
+        "passed": true,
+        "failures": [],
+        "event_count": 8
+      },
+      {
+        "scenario_id": "reject_invalid_tool_input",
+        "passed": true,
+        "failures": [],
+        "event_count": 7
+      },
+      {
+        "scenario_id": "block_approval_version_mismatch",
+        "passed": true,
+        "failures": [],
+        "event_count": 9
+      },
+      {
+        "scenario_id": "escalate_write_after_failed_action",
+        "passed": true,
+        "failures": [],
+        "event_count": 15
+      },
+      {
+        "scenario_id": "allow_read_after_failed_action",
+        "passed": true,
+        "failures": [],
+        "event_count": 16
+      },
+      {
+        "scenario_id": "replay_duplicate_approval",
+        "passed": true,
+        "failures": [],
+        "event_count": 18
+      },
+      {
+        "scenario_id": "expire_pending_approval",
+        "passed": true,
+        "failures": [],
+        "event_count": 12
+      },
+      {
+        "scenario_id": "retry_transient_failure_with_new_key",
+        "passed": true,
+        "failures": [],
+        "event_count": 26
+      },
+      {
+        "scenario_id": "block_retry_after_terminal_failure",
+        "passed": true,
+        "failures": [],
+        "event_count": 19
+      },
+      {
+        "scenario_id": "deny_requester_self_approval",
+        "passed": true,
+        "failures": [],
+        "event_count": 9
+      },
+      {
+        "scenario_id": "deny_approver_outside_scope",
+        "passed": true,
+        "failures": [],
+        "event_count": 9
+      },
+      {
+        "scenario_id": "authorized_approver_rejects_action",
+        "passed": true,
+        "failures": [],
+        "event_count": 12
+      }
+    ]
+  }
+}
