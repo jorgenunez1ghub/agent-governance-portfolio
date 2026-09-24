@@ -14,6 +14,8 @@ outcome-benchmark scenarios
 
 ## Three-Minute Portfolio Review
 
+**[Review the Evidence](REVIEWER_QUICKSTART.md)** — a five-minute walkthrough of one representative authorization-boundary scenario, its expected audit evidence, and what the check does not establish.
+
 > **Publication status: PUBLIC.** This is the clean-history, sanitized portfolio
 > repository. Private development history is excluded, and public commits use
 > `jorgenunez1ghub` with the GitHub-provided no-reply address.
