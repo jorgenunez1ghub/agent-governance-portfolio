@@ -12,6 +12,10 @@ inspectable and governable.
 **Verified:** 62 automated tests · 16/16 policy scenarios · eight configured
 outcome-benchmark scenarios
 
+> **Review the evidence in five minutes:** follow the
+> [reviewer quickstart](REVIEWER_QUICKSTART.md) to trace one hard authority-floor
+> claim from its scenario contract to the recorded public result and evidence boundary.
+
 ## Three-Minute Portfolio Review
 
 > **Publication status: PUBLIC.** This is the clean-history, sanitized portfolio
